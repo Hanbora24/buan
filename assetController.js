@@ -13,7 +13,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
   $scope.EditAssetBaseInfo = {};
 
   function setGrid() {
-    var MyGrid = pagerJsonGrid({
+    let MyGrid = pagerJsonGrid({
       grid_id: 'list',
       pager_id: 'listPager',
       url: '/asset/getAssetBaseInfoList.json',
@@ -78,12 +78,12 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
         },
         {
           name: 'WORK_GBN_NM', width: 50, formatter: function(value, e, row) {
-            var Idx = 0;
+            let Idx = 0;
             if (!(row.BASE_SID > 0)) {
               return '';
             }
             $.each($scope.WorkAssetCode, function(idx, item) {
-              if (item.CD == row.WORK_GBN) {
+              if (item.CD === row.WORK_GBN) {
                 Idx = idx;
               }
             });
@@ -94,12 +94,12 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
         { name: 'WORK_GBN', width: 40, hidden: true },
         {
           name: 'ASSET_GBN1_NM', width: 120, formatter: function(value, e, row) {
-            var Idx = 0;
+            let Idx = 0;
             if (!(row.BASE_SID > 0)) {
               return '';
             }
             $.each($scope.BigAssetCode, function(idx, item) {
-              if (item.CD == row.ASSET_GBN1) {
+              if (item.CD === row.ASSET_GBN1) {
                 Idx = idx;
               }
             });
@@ -108,12 +108,12 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
         },
         {
           name: 'ASSET_GBN2_NM', width: 200, formatter: function(value, e, row) {
-            var Idx = 0;
+            let Idx = 0;
             if (!(row.BASE_SID > 0)) {
               return '';
             }
             $.each($scope.SmallAssetCode, function(idx, item) {
-              if (item.CD == row.ASSET_GBN2) {
+              if (item.CD === row.ASSET_GBN2) {
                 Idx = idx;
               }
             });
@@ -125,12 +125,12 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
         { name: 'ASSET_CD', width: 150 },
         /*
         { name : 'ASSET_CD', width : 50, formatter:function(value,e,row){
-          var Idx = 0;
+          let Idx = 0;
           if(!(row.BASE_SID > 0)){
             return "";
           }
           $.each ($scope.AssetCode, function(idx,item){
-            if(item.CD == row.ASSET_GBN1){
+            if(item.CD === row.ASSET_GBN1){
               Idx = idx;
             }
           });
@@ -173,7 +173,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
         { name: 'UPDATE_ID', width: 80, hidden: false },
         { name: 'UPDATE_DT', width: 80, hidden: false }
       ],
-      onSelectRow: function(rowid, status, e) {
+      onSelectRow: function(rowid) {
         $scope.SelectedAssetBaseInfo = $('#list').jqGrid('getRowData', rowid);
         if (parseInt($scope.SelectedAssetBaseInfo.BASE_SID) > 0) {
           $scope.asset_base_sid = $scope.SelectedAssetBaseInfo.BASE_SID;
@@ -188,10 +188,11 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
         $scope.$apply();
       },
       gridComplete: function() {
-        var ids = $(this).jqGrid('getDataIDs');
+        const ids = $(this).jqGrid('getDataIDs');
+        const $list = $('#list');
         $(this).setSelection(ids[0]);
-        $scope.currentPageNo = $('#list').getGridParam('page');
-        $scope.count = $('#list').getGridParam('records');
+        $scope.currentPageNo = $list.getGridParam('page');
+        $scope.count = $list.getGridParam('records');
         $scope.$apply();
       }
     });
@@ -255,21 +256,22 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
     const levelStep = $scope.levelStep;
     const levelNm = $scope.levelNm;
     const fn = $scope.fn;
+    const form = $('#exportForm');
 
-    $('#exportForm').find('[name=jobType]').val(jobType);
-    $('#exportForm').find('#levelStep').val(levelStep);
-    $('#exportForm').find('#levelNm').val(levelNm);
-    $('#exportForm').find('#fn').val(fn);
-    $('#exportForm').submit();
+    form.find('[name=jobType]').val(jobType);
+    form.find('#levelStep').val(levelStep);
+    form.find('#levelNm').val(levelNm);
+    form.find('#fn').val(fn);
+    form.submit();
   };
 
   //코드가져오기
   function getLevelName(LEVEL_CD, level) {
     //let LEVEL_CD = pathCd.split('_')[level-1];
     //return $rootScope.LevelName['' + (level - 1) + '_' + LEVEL_CD];
-    var Idx = 0;
-    var List = [];
-    var result = '';
+    let Idx = 0;
+    let List = [];
+    let result = '';
     switch (level) {
       case 3:
         List = [{ CD: 'F', NAME: '시설' }, { CD: 'N', NAME: '관망' }];
@@ -287,7 +289,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
         break;
     }
     $.each(List, function(idx, item) {
-      if (item.CD == LEVEL_CD) {
+      if (item.CD === LEVEL_CD) {
         Idx = idx;
         result = item.NAME;
       }
@@ -307,7 +309,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
     $scope.AseetLevelInfo = data;
     $.each($scope.AseetLevelInfo, function(idx, Item) {
       //$rootScope.LevelName[''+(Item.LEVEL_STEP -1) +'_'+ Item.LEVEL_CD] = Item.LEVEL_NM;
-      if (Item.FN_CD == 'F' && Item.LEVEL_STEP == 7) {
+      if (Item.FN_CD === 'F' && Item.LEVEL_STEP === 7) {
         $scope.BigAssetCode.push({
           FN_CD: Item.FN_CD,
           CD: Item.LEVEL_CD,
@@ -316,7 +318,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
           P_CLASS_CD: Item.P_CLASS_CD
         });
       }
-      if (Item.FN_CD == 'N' && Item.LEVEL_STEP == 6) {
+      if (Item.FN_CD === 'N' && Item.LEVEL_STEP === 6) {
         $scope.BigAssetCode.push({
           FN_CD: Item.FN_CD,
           CD: Item.LEVEL_CD,
@@ -325,7 +327,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
           P_CLASS_CD: Item.P_CLASS_CD
         });
       }
-      if (Item.FN_CD == 'F' && Item.LEVEL_STEP == 8) {
+      if (Item.FN_CD === 'F' && Item.LEVEL_STEP === 8) {
         $scope.SmallAssetCode.push({
           FN_CD: Item.FN_CD,
           CD: Item.LEVEL_CD,
@@ -334,7 +336,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
           P_CLASS_CD: Item.P_CLASS_CD
         });
       }
-      if (Item.FN_CD == 'N' && Item.LEVEL_STEP == 7) {
+      if (Item.FN_CD === 'N' && Item.LEVEL_STEP === 7) {
         $scope.SmallAssetCode.push({
           FN_CD: Item.FN_CD,
           CD: Item.LEVEL_CD,
@@ -343,7 +345,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
           P_CLASS_CD: Item.P_CLASS_CD
         });
       }
-      if (Item.FN_CD == 'F' && Item.LEVEL_STEP == 6) {
+      if (Item.FN_CD === 'F' && Item.LEVEL_STEP === 6) {
         $scope.WorkAssetCode.push({
           FN_CD: Item.FN_CD,
           CD: Item.LEVEL_CD,
@@ -352,7 +354,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
           P_CLASS_CD: Item.P_CLASS_CD
         });
       }
-      if (Item.FN_CD == 'N' && Item.LEVEL_STEP == 5) {
+      if (Item.FN_CD === 'N' && Item.LEVEL_STEP === 5) {
         $scope.WorkAssetCode.push({
           FN_CD: Item.FN_CD,
           CD: Item.LEVEL_CD,
@@ -398,7 +400,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
 
   //팝업 보기
   $scope.ShowEditAssetBasePopup = function() {
-    if ($scope.SelectedAssetBaseInfo.BASE_SID == '' || $scope.SelectedAssetBaseInfo.BASE_SID == undefined) {
+    if ($scope.SelectedAssetBaseInfo.BASE_SID === '' || $scope.SelectedAssetBaseInfo.BASE_SID === undefined) {
       alertify.alert('', '항목을 선택해주세요.');
       return;
     }
@@ -416,13 +418,13 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
     $('select[name=statusEvaluation]').change(function() {
       $('#statusEvaluation').val($('select[name=statusEvaluation] option:selected').text());
     });
-    var param = angular.copy($scope.EditAssetBaseInfo);
+    let param = angular.copy($scope.EditAssetBaseInfo);
     param.base_sid = $scope.EditAssetBaseInfo.BASE_SID;
     param.reference = $scope.EditAssetBaseInfo.REFERENCE;
     param.temp_yn = 'N';
     $scope.SelectedAssetBaseInfo = angular.copy($scope.EditAssetBaseInfo);
     //$scope.AssetBaseInfo = angular.copy($scope.AssetBaseInfoEdit);
-    if ($scope.EditAssetBaseInfo.SPARE_RATIO == '' || $scope.EditAssetBaseInfo.FN_GBN == '' || $scope.EditAssetBaseInfo.WORK_GBN == '' || $scope.EditAssetBaseInfo.ASSET_GBN1 == '' || $scope.EditAssetBaseInfo.ASSET_GBN2 == '' || $scope.EditAssetBaseInfo.STATE_CD == '') { //필수항목을 입력하지 않았을때
+    if ($scope.EditAssetBaseInfo.SPARE_RATIO === '' || $scope.EditAssetBaseInfo.FN_GBN === '' || $scope.EditAssetBaseInfo.WORK_GBN === '' || $scope.EditAssetBaseInfo.ASSET_GBN1 === '' || $scope.EditAssetBaseInfo.ASSET_GBN2 === '' || $scope.EditAssetBaseInfo.STATE_CD === '') { //필수항목을 입력하지 않았을때
       alertify.alert('', '필수항목을 입력하세요.');
       return;
     }
@@ -431,7 +433,7 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
       alertify.alert('', '비정상 자료입니다.');
       return;
     }
-    if ($scope.EditAssetBaseInfo.LIFE_MIN == '' || $scope.EditAssetBaseInfo.LIFE_MAX == '') { // 최소수명,최대수명을 입력하지 않았을때
+    if ($scope.EditAssetBaseInfo.LIFE_MIN === '' || $scope.EditAssetBaseInfo.LIFE_MAX === '') { // 최소수명,최대수명을 입력하지 않았을때
       alertify.alert('', '수명을 입력하세요.');
       return;
     }
@@ -439,11 +441,10 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
       alertify.alert('', '수명범위를 확인하세요.');
       return;
     }
-    mainDataService.updateAssetBase(param).success(function(data) {
+    mainDataService.updateAssetBase(param).success(function() {
       $scope.CloseEditAssetBasePopup();
       $scope.loadList();
       alertify.success('수정되었습니다.');
-      return;
     });
   };
 }
@@ -519,7 +520,7 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
   function formatLevelNum(val) {
     let result;
 
-    if (typeof val == 'undefined' || val == null) {
+    if (typeof val === 'undefined' || val === null) {
       result = '';
     } else {
       result = '레벨' + val;
@@ -601,24 +602,25 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
       }
       ,
       gridComplete: function() {
-        var ids = $(this).jqGrid('getDataIDs');
+        let ids = $(this).jqGrid('getDataIDs');
+        const $list = $('#list');
 
         if ($.isEmptyObject($scope.LevelInfo)) {
           $(this).setSelection(ids[0]);
         } else {
-          var rowData = $(this).jqGrid('getRowData');
+          let rowData = $(this).jqGrid('getRowData');
 
-          for (var i = 0; i < rowData.length; i++) {
-            if (rowData[i].LEVEL_CD == $scope.LevelInfo.LEVEL_CD) {
+          for (let i = 0; i < rowData.length; i++) {
+            if (rowData[i].LEVEL_CD === $scope.LevelInfo.LEVEL_CD) {
               $(this).setSelection(ids[i]);
               break;
             }
           }
         }
 
-        $scope.currentPageNo = $('#list').getGridParam('page');
-        $scope.count = $('#list').getGridParam('records');
-        if ($('#list').jqGrid('getRowData', ids[0]).RNUM == '') {
+        $scope.currentPageNo = $list.getGridParam('page');
+        $scope.count = $list.getGridParam('records');
+        if ($list.jqGrid('getRowData', ids[0]).RNUM === '') {
           $scope.count = 0;
         }
         $scope.$apply();
@@ -632,12 +634,13 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
     const levelStep = $scope.levelStep;
     const levelNm = $scope.levelNm;
     const fn = $scope.fn;
+    const form = $('#exportForm');
 
-    $('#exportForm').find('[name=jobType]').val(jobType);
-    $('#exportForm').find('#levelStep').val(levelStep);
-    $('#exportForm').find('#levelNm').val(levelNm);
-    $('#exportForm').find('#fn').val(fn);
-    $('#exportForm').submit();
+    form.find('[name=jobType]').val(jobType);
+    form.find('#levelStep').val(levelStep);
+    form.find('#levelNm').val(levelNm);
+    form.find('#fn').val(fn);
+    form.submit();
   };
 
   // 레벨 코드 신규 모달창
@@ -689,18 +692,18 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
   };
   $scope.levelCd_length = '';
   $scope.displayAssetCodeLength = function() {
-    var idx = $scope.LevelInfoModal.LEVEL_STEP - 1;
-    if (idx >= $scope.LevelF.length && $scope.LevelInfoModal.FN_CD == 'F') {
+    let idx = $scope.LevelInfoModal.LEVEL_STEP - 1;
+    if (idx >= $scope.LevelF.length && $scope.LevelInfoModal.FN_CD === 'F') {
       $scope.levelCd_length = '시설레벨' + $scope.LevelF.length + '/' + '관망레벨' + $scope.LevelN.length;
       return;
     }
-    if (idx >= $scope.LevelN.length && $scope.LevelInfoModal.FN_CD == 'N') {
+    if (idx >= $scope.LevelN.length && $scope.LevelInfoModal.FN_CD === 'N') {
       $scope.levelCd_length = '시설레벨' + $scope.LevelF.length + '/' + '관망레벨' + $scope.LevelN.length;
       return;
     }
-    if ($scope.LevelInfoModal.FN_CD == 'F') {
+    if ($scope.LevelInfoModal.FN_CD === 'F') {
       $scope.levelCd_length = '자산분류코드는 ' + $scope.LevelF[idx].CD_LEN + '자로 입력하세요';
-    } else if ($scope.LevelInfoModal.FN_CD == 'N') {
+    } else if ($scope.LevelInfoModal.FN_CD === 'N') {
       $scope.levelCd_length = '자산분류코드는 ' + $scope.LevelN[idx].CD_LEN + '자로 입력하세요';
     } else if (idx >= $scope.assetCriteria.FN_NUM) {
       $scope.levelCd_length = '시설/관망 구분을 설정하세요';
@@ -850,13 +853,13 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
   updateAssetLevelList();
 
   $scope.makePathCd = function(LevelInfoModal) {
-    var P_PATH_CD = '';
+    let P_PATH_CD = '';
     $.each($scope.AssetLevelList, function(idx, Item) {
-      if (Item.LEVEL_CD == LevelInfoModal.P_CLASS_CD && Item.LEVEL_STEP == LevelInfoModal.P_LEVEL_STEP && Item.FN_CD == LevelInfoModal.FN_CD) {
-        P_PATH_CD = (Item.PATH_CD == null) ? Item.LEVEL_CD : Item.PATH_CD;
+      if (Item.LEVEL_CD === LevelInfoModal.P_CLASS_CD && Item.LEVEL_STEP === LevelInfoModal.P_LEVEL_STEP && Item.FN_CD === LevelInfoModal.FN_CD) {
+        P_PATH_CD = (Item.PATH_CD === null) ? Item.LEVEL_CD : Item.PATH_CD;
       }
     });
-    LevelInfoModal.PATH_CD = '' + P_PATH_CD + ((P_PATH_CD != '') ? '_' : '') + LevelInfoModal.CLASS_CD;
+    LevelInfoModal.PATH_CD = '' + P_PATH_CD + ((P_PATH_CD !== '') ? '_' : '') + LevelInfoModal.CLASS_CD;
   };
 
   $scope.insertNewLevelCode = function(item) {
