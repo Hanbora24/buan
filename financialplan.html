@@ -1,0 +1,593 @@
+<div class="conts">
+	<div class="contain conts_half left">
+		<div class="conts_in left_tab" id="tab1_l">
+			<div class="conts_tit">
+				<div class="main_conts">
+					<p>
+						<i class="fas fa-check-circle"></i>재정계획 목록
+					</p>
+				</div>
+				<div id="myApp1" ng-controller="financialPlanController"></div>
+			</div>
+			<div class="search_box main_conts">
+				<div class="clear tits" style="position: relative;">
+					<div class="clear">
+						<div class="form-group">
+							<div class="inputRdo">
+								<div class="custom-control custom-radio" style="width: auto !important;" ng-init="searchDateType=1">
+									<input kr-input type="radio" class="custom-control-input" name="DATE_radio" id="DATE_radio1" ng-model="searchDateType" value="1"> 
+									<label class="custom-control-label" for="DATE_radio1" style="left: 30%; top: 0;"> 
+										<span class="pdr_26">연도</span>
+									</label> 
+									<select class="instKind" ng-model="selectedCurrYear" ng-init="selectedCurrYear = option[0]" ng-click="changeRadio(1)" style="width: 130px !important;">
+										<option value="">전체</option>
+										<option ng-repeat="year in ComCodeYearList" ng-selected="year.C_SCODE==selectedCurrYear" value="{{year.C_SCODE}}">{{year.C_NAME}}년</option>
+									</select>
+								</div>
+								<div class="custom-control custom-radio" style="width: auto !important; height: 29px;">
+									<input kr-input type="radio" class="custom-control-input" name="DATE_radio" id="DATE_radio2" ng-model="searchDateType" value="2"> 
+									<label class="custom-control-label" for="DATE_radio2" style="left: 13%; top: 0;"> 
+										<span class="pr-2">기간선택</span>
+									</label> 
+									<input kr-input type="text" class="datePicker" ng-model="searchDate.S_DATE" id="searchDate_S_DATE" ng-click="changeRadio(2)" style="width: 130px !important;"> 
+									<label class="formSlash" style="min-width: auto !important; text-align: center;"> 
+										<span>~</span>
+									</label> 
+									<input kr-input type="text" class="datePicker" ng-model="searchDate.E_DATE" id="searchDate_E_DATE" ng-click="changeRadio(2)" style="width: 130px !important;">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="search_twoForm">
+						<div class="form-group">
+							<label for=""> <span>분석명</span></label>
+							<input kr-input type="text" ng-model="planName" maxlength="10" style="width: 240px;">
+						</div>
+					</div>
+					<div class="float_R"
+						style="position: absolute; bottom: 0; right: 0;">
+						<button class="btn btn_nv btnView" ng-click="search();">조회</button>
+						<button id="delete" class="btn btn-danger btnEdit"
+							ng-click="deleteFinance();">삭제</button>
+						<button class="btn btn_gr btnView" ng-click="getExcelDownload();">엑셀</button>
+					</div>
+				</div>
+			</div>
+			<div class="grid">
+				<table id="list"></table>
+			</div>
+			<div id="listPager"></div>
+			<div id="list_page"></div>
+		</div>
+	</div>
+	<div class="contain conts_half right">
+		<div class="conts_in">
+			<div class="min_tab">
+				<ul class="tabs">
+					<li>
+						<button id="tab1_btn" class="active" data-tab="tab1">재정수지분석
+							관리</button>
+					</li>
+					<li>
+						<button id="tab2_btn" data-tab="tab2" class="">재무제표(BS)
+							관리</button>
+					</li>
+					<li>
+						<button id="tab3_btn" data-tab="tab3" class="">손익계산서(PL)
+							관리</button>
+					</li>
+					<li>
+						<button id="tab4_btn" data-tab="tab4" class="">현금흐름표(CF)
+							관리</button>
+					</li>
+					<li>
+						<button id="tab5_btn" data-tab="tab5" class="">기타 비용 관리
+							관리</button>
+					</li>
+				</ul>
+			</div>
+			<div id="tab1" class="conts_box main_conts w100">
+				<div class="conts_tit">
+					<div class="main_conts">
+						<p>
+							<i class="fas fa-check-circle"></i>재정수지분석
+						</p>
+					</div>
+				</div>
+				<div class="clear w_98 mt-1">
+					<div class="w100 Form100">
+						<div class="form-group">
+							<label for=""><span>분석명</span></label> <input type="text"
+								maxlength="200" ng-model="SelectedFinanceInfo.FIN_ANLS_NM" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="clear w_98">
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성자</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRTR_NM">
+						</div>
+					</div>
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성일</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRT_YMD">
+						</div>
+					</div>
+				</div>
+				<div class="clear w_98">
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>분석일</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.FIN_ANLS_YMD">
+						</div>
+					</div>
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>물가상승률</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.PRICE_RAISE_RATIO">
+						</div>
+					</div>
+				</div>
+				<div class="min_tab text-center min_tab4">
+					<ul class="tabs tabs_2">
+						<li ng-repeat="data in FinancialList">
+							<button id="tab_{{data.C_CVALUE1}}_btn"class="{{(selectedTabId==(data.C_CVALUE1))?'active':''}}"
+							ng-click="tabClick(data.C_CVALUE1)">{{data.C_NAME}}</button>
+						</li>
+					</ul>
+				</div>
+				<div id="tab1_1" ng-show="(selectedTabId == 'FN09')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2"
+						style="height: 460px;" ng-hide="(yearList2 == '' || yearList2 == null)">
+						<table class="table table_basic mb-0 table_200 table_style table_sticky">
+							<colgroup>
+								<col width="129px">
+								<col width="129px">
+								<col ng-repeat="yyyy in yearList2" width="129px;">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th>구분</th>
+									<th class="left_1">항목</th>
+									<th ng-repeat="yyyy in yearList2">{{yyyy}}년</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="detail in FinanceDetailList">
+									<td rowspan="{{detail.GB_cnt}}" ng-if="detail.row_idx==detail.idx" class="td_back_color left_0">{{detail.FIN_ANLS_GUBUN_NM}}</td>
+									<td class="td_back_color">{{detail.FIN_ANLS_ITEM_NM}}</td>
+									<td ng-repeat="yyyy in yearList2" class="text-right">{{detail['\''+yyyy+'\'']}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="table_wrap w_98 m-2 d-flex align-items-center justify-content-center" style="height: 460px;" ng-show="(yearList2 == '' || yearList2 == null)">
+						<p class="text-center small font-weight-bold">데이터가 없습니다.</p>
+					</div>
+				</div>
+				<div id="tab1_2" ng-show="(selectedTabId == 'FN10')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" ng-hide="(yearList2 == '' || yearList2 == null)">
+						<table class="table table_basic mb-0 table_200 table_sticky">
+							<colgroup>
+								<col width="129px">
+								<col ng-repeat="yyyy in yearList2" width="129px;">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th>구분</th>
+									<th ng-repeat="yyyy in yearList2">{{yyyy}}년</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="detail in FinanceDetailList">
+									<td class="td_back_color left_0">{{detail.FIN_ANLS_ITEM_NM}}</td>
+									<td ng-repeat="yyyy in yearList2" class="text-right">{{detail['\''+yyyy+'\'']}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="table_wrap w_98 m-2 d-flex align-items-center justify-content-center" style="height: 460px;" ng-show="(yearList2 == '' || yearList2 == null)">
+						<p class="text-center small font-weight-bold">데이터가 없습니다.</p>
+					</div>
+				</div>
+				<div id="tab1_3" ng-show="(selectedTabId == 'FN11')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" ng-hide="(yearList2 == '' || yearList2 == null)">
+						<table class="table table_basic mb-0 table_200 table_sticky">
+							<colgroup>
+								<col width="129px">
+								<col ng-repeat="yyyy in yearList2" width="129px;">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th>구분</th>
+									<th ng-repeat="yyyy in yearList2">{{yyyy}}년</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="detail in FinanceDetailList">
+									<!-- 확인 -->
+									<td class="td_back_color left_0">{{detail.FIN_ANLS_ITEM_NM}}</td>
+									<td ng-repeat="yyyy in yearList2" class="text-right">{{detail['\''+yyyy+'\'']}}</td>
+									<!-- <td class="td_back_color left_0">{{(selectedTabInfo[3].OCCODE|filter:{C_SCODE:detail.C_SCODE})[0].C_NAME}}</td> -->
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="table_wrap w_98 m-2 d-flex align-items-center justify-content-center" style="height: 460px;" ng-show="(yearList2 == '' || yearList2 == null)">
+						<p class="text-center small font-weight-bold">데이터가 없습니다.</p>
+					</div>
+				</div>
+				<div id="tab1_4" ng-show="(selectedTabId == 'FN14')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" style="max-height: 460px;" ng-hide="(yearList2 == '' || yearList2 == null)">
+						<table class="table table_basic mb-0 table_200 table_sticky table_style">
+							<colgroup>
+								<col width="129px">
+								<col width="129px">
+								<col width="129px">
+								<col ng-repeat="yyyy in yearList2" width="129px;">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th colspan="2">구분</th>
+									<th class="left_1 left_88" style="left: 259px;">차입</th>
+									<th ng-repeat="yyyy in yearList2">{{yyyy}}년</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="detail in FinanceDetailList">
+									<td rowspan="{{detail.GB_cnt}}" ng-if="detail.row_idx==detail.idx" class="td_back_color left_0" 
+									colspan="{{detail.GB_colspan}}">{{detail.C_NAME}}</td>
+									<td class="td_back_color" ng-hide="detail.LOAN_ITEM_YEAR == '0000'">{{detail.LOAN_ITEM_YEAR}}년</td>
+									<td class="left_1 left_88 bg-white text-right" style="left: 259px;" ng-hide="detail.LOAN_ITEM_YEAR == 0000">{{detail['\'0000\'']}}</td>
+									<td ng-repeat="yyyy in yearList2" class="text-right">{{detail['\''+yyyy+'\'']}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="table_wrap w_98 m-2 d-flex align-items-center justify-content-center" style="height: 460px;" ng-show="(yearList2 == '' || yearList2 == null)">
+						<p class="text-center small font-weight-bold">데이터가 없습니다.</p>
+					</div>
+				</div>
+				<div id="tab1_5" ng-show="(selectedTabId == 'FN12')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" ng-hide="(yearList2 == '' || yearList2 == null)">
+						<table class="table table_basic mb-0 table_200 table_sticky">
+							<colgroup>
+								<col width="129px">
+								<col ng-repeat="yyyy in yearList2" width="129px;">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th>구분</th>
+									<th ng-repeat="yyyy in yearList2">{{yyyy}}년</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="detail in FinanceDetailList">
+									<td class="td_back_color left_0">{{detail.FIN_ANLS_ITEM_NM}}</td>
+									<!-- <td class="td_back_color left_0">{{detail.C_NAME}}</td> -->
+									<td ng-repeat="yyyy in yearList2" class="text-right">{{detail['\''+yyyy+'\'']}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="table_wrap w_98 m-2 d-flex align-items-center justify-content-center" style="height: 460px;" ng-show="(yearList2 == '' || yearList2 == null)">
+						<p class="text-center small font-weight-bold">데이터가 없습니다.</p>
+					</div>
+				</div>
+				<div class="float_R" style="padding-right: 10px;">
+					<button class="btn btn_sky btnEdit" ng-click="ShowFinancialPopup()">신규분석</button>
+					<button class="btn btn_nv btnView" ng-click="ShowChartFinancial()">그래프</button>
+					<button class="btn btn-info btnView" ng-click="Report()">보고서</button>
+				</div>
+			</div>
+			<div id="tab2" class="conts_box main_conts w100"
+				style="display: none;">
+				<div class="conts_tit">
+					<div class="main_conts">
+						<p>
+							<i class="fas fa-check-circle"></i>재무제표(BS)
+						</p>
+					</div>
+				</div>
+				<div class="clear w_98">
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성자</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRTR_NM">
+						</div>
+					</div>
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성일</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRT_YMD">
+						</div>
+					</div>
+				</div>
+				<div class="table_wrap table-responsive table_scroll w_98 m-2" style="height: 600px;">
+					<table class="table table_basic mb-0 table_200 table_style table_sticky">
+						<colgroup>
+							<col width="129px">
+							<col width="170px">
+							<col width="129px" ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false">
+						</colgroup>
+						<thead>
+							<tr class="text-center" style="height: 35px;">
+								<th class="backslash" colspan="2"><span class="w_50 d-inline-block px-2 text-left">항목</span><span class="w_50 d-inline-block px-2 text-right">연도</span></th>
+								<th ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false" >{{year.C_NAME}}년</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- {{detail.ACCOUNT_GROUP_NM.length >0 ?'tr_border_top':''}} -->
+							<tr ng-repeat="detail in FinancialBSList" ng-hide="(detail.ACCOUNT_GROUP_NM == detail.ACCOUNT_NM)">
+								<td rowspan="{{((detail.ACCOUNT_GROUP_NM) == '부채')?(((detail.ACCOUNT_GROUP_NM) == '자본')?'12':'8'):'31'}}" ng-if="($index == 1 || $index == 33 || $index == 42)" class="td_back_color left_0">{{detail.ACCOUNT_GROUP_NM}}</td>
+								<td class="td_back_color {{(detail.ACCOUNT_NM == '자산총계' || detail.ACCOUNT_NM == '부채총계' || detail.ACCOUNT_NM == '자본총계' || detail.ACCOUNT_NM == '부채와자본총계')? 'text-center':'text-left'}}" 
+								style="white-space: pre;">{{detail.ACCOUNT_NM}}</td>
+								<td ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false" class="text-right">{{detail['\''+year.C_SCODE+'\'']}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="float_R" style="padding-right: 10px;">
+					<button class="btn btn_sky btnEdit" ng-click="NewBSPopup()">신규/수정</button>
+					<!-- <button class="btn btn_nv" ng-click="EditBSPopup()">수정</button> -->
+				</div>
+			</div>
+			<div id="tab3" class="conts_box main_conts w100"
+				style="display: none;">
+				<div class="conts_tit">
+					<div class="main_conts">
+						<p>
+							<i class="fas fa-check-circle"></i>손익계산서(PL)
+						</p>
+					</div>
+				</div>
+				<div class="clear w_98">
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성자</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRTR_NM">
+						</div>
+					</div>
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성일</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRT_YMD">
+						</div>
+					</div>
+				</div>
+				<div class="table_wrap table-responsive table_scroll w_98 m-2" style="height: 600px;">
+					<table class="table table_basic mb-0 table_200 table_style table_sticky">
+						<colgroup>
+							<col width="129px">
+							<col width="145px">
+							<col width="129px" ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false">
+						</colgroup>
+						<thead>
+							<tr class="text-center" style="height: 35px;">
+								<th class="backslash" colspan="2"><span class="w_50 d-inline-block px-2 text-left">항목</span><span class="w_50 d-inline-block px-2 text-right">연도</span></th>
+								<th ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false">{{year.C_NAME}}년</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="detail in FinancialPLList" ng-hide="(detail.ACCOUNT_GROUP_NM == detail.ACCOUNT_NM)">
+								<td class="td_back_color left_0" rowspan="{{FinancialPLList.length}}" ng-if="$index == 1">{{detail.ACCOUNT_GROUP_NM}}</td>
+								<td class="td_back_color text-left" style="white-space: pre;">{{detail.ACCOUNT_NM}}</td>
+								<td ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false" class="text-right">{{detail['\''+year.C_SCODE+'\'']}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="float_R" style="padding-right: 10px;">
+					<button class="btn btn_sky btnEdit" ng-click="NewPLPopup()">신규/수정</button>
+					<!-- <button class="btn btn_nv" ng-click="EditPLPopup()">수정</button> -->
+				</div>
+			</div>
+			<div id="tab4" class="conts_box main_conts w100"
+				style="display: none;">
+				<div class="conts_tit">
+					<div class="main_conts">
+						<p>
+							<i class="fas fa-check-circle"></i>현금흐름표(CF)
+						</p>
+					</div>
+				</div>
+				<div class="clear w_98">
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성자</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRTR_NM">
+						</div>
+					</div>
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성일</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRT_YMD">
+						</div>
+					</div>
+				</div>
+				<div class="table_wrap table-responsive table_scroll w_98 m-2" style="height: 600px;">
+					<table class="table table_basic mb-0 table_200 table_style table_sticky">
+						<colgroup>
+							<col width="129px">
+							<col width="190px">
+							<col width="120px" ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false">
+						</colgroup>
+						<thead>
+							<tr class="text-center" style="height: 35px;">
+								<th class="backslash" colspan="2"><span class="w_50 d-inline-block px-2 text-left">항목</span><span class="w_50 d-inline-block px-2 text-right">연도</span></th>
+								<th ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false">{{year.C_NAME}}년</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="detail in FinancialCFList" ng-hide="(detail.ACCOUNT_GROUP_NM == detail.ACCOUNT_NM)">
+								<td class="td_back_color left_0" rowspan="{{FinancialCFList.length}}" ng-if="$index == 1">{{detail.ACCOUNT_GROUP_NM}}</td>
+								<td class="td_back_color text-left" style="white-space: pre;">{{detail.ACCOUNT_NM}}</td>
+								<td ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':false" class="text-right">{{detail['\''+year.C_SCODE+'\'']}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="float_R" style="padding-right: 10px;">
+					<button class="btn btn_sky btnEdit" ng-click="NewCFPopup()">신규/수정</button>
+					<!-- <button class="btn btn_nv" ng-click="EditCFPopup()">수정</button> -->
+				</div>
+			</div>
+			<div id="tab5" class="conts_box main_conts w100"
+				style="display: none;">
+				<div class="conts_tit">
+					<div class="main_conts">
+						<p>
+							<i class="fas fa-check-circle"></i>기타관리
+						</p>
+					</div>
+				</div>
+				<div class="clear w_98">
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성자</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRTR_NM">
+						</div>
+					</div>
+					<div class="half_formB fm_w50">
+						<div class="form-group">
+							<label for=""><span>작성일</span></label> <input type="text" readonly="readonly" ng-model="SelectedFinanceInfo.WRT_YMD">
+						</div>
+					</div>
+				</div>
+				<div class="min_tab text-center min_tab4">
+					<ul class="tabs tabs_2">
+						<li ng-repeat="data in FinancialOCList">
+							<button id="tab_{{data.C_SCODE}}_btn" class="{{(OCselectedTabId=='FN'+(data.C_SCODE))?'active':''}}"
+							ng-click="OCtabClick(data.C_SCODE)">{{data.C_NAME}}</button>
+						</li>
+					</ul>
+				</div>
+				<div id="tab5_1" class="conts_box main_conts w100" ng-show="(OCselectedTabId == 'FN02')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" style="max-height: 560px;">
+						<table class="table table_basic mb-0 table_200 table_style table_sticky">
+							<colgroup>
+								<col width="78px">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th rowspan="2">연도</th>
+									<th ng-repeat="list in tabInfo[0].OCCODE" colspan="{{($index>7)?'5':'6'}}" ng-if="$index%6==0">{{list.C_MEMO}}</th>
+								</tr>
+								<tr class="text-center">
+									<th ng-repeat="list in tabInfo[0].OCCODE" ng-class="($index==0? 'position-static': '')" ng-hide="list.C_SCODE == 300">{{list.C_NAME}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':true" ng-hide="list.C_SCODE == 300">
+									<td class="td_back_color left_0">{{year.C_NAME}}년</td>
+									<td ng-repeat="list in tabInfo[0].OCCODE" class="text-right" ng-hide="list.C_SCODE == 300">{{tabInfo[0].DATA[''+year.C_SCODE+'FN02_'+list.C_SCODE]}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div id="tab5_2" class="conts_box main_conts w100" ng-show="(OCselectedTabId == 'FN03')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" style="max-height: 560px;">
+						<table class="table table_basic mb-0 table_200 table_style table_sticky">
+							<colgroup>
+								<col width="78px">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th rowspan="2">연도</th>
+									<th colspan="6">인건비(원)</th>
+								</tr>
+								<tr class="text-center">
+									<th ng-repeat="list in tabInfo[1].OCCODE" ng-class="($index==0? 'position-static': '')">{{list.C_NAME}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':true">
+									<td class="td_back_color left_0">{{year.C_NAME}}년</td>
+									<td ng-repeat="list in tabInfo[1].OCCODE" class="text-right">{{tabInfo[1].DATA[''+year.C_SCODE+'FN03_'+list.C_SCODE]}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div id="tab5_3" class="conts_box main_conts w100" ng-show="(OCselectedTabId == 'FN04')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" style="max-height: 560px;">
+						<table class="table table_basic mb-0 table_200 table_style table_sticky">
+							<colgroup>
+								<col width="78px">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th rowspan="2">연도</th>
+									<th colspan="7">운영관리비(원)</th>
+								</tr>
+								<tr class="text-center">
+									<th ng-repeat="list in tabInfo[2].OCCODE" ng-class="($index==0? 'position-static': '')">{{list.C_NAME}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':true">
+									<td class="td_back_color left_0">{{year.C_NAME}}년</td>
+									<td ng-repeat="list in tabInfo[2].OCCODE" class="text-right">{{tabInfo[2].DATA[''+year.C_SCODE+'FN04_'+list.C_SCODE]}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div id="tab5_4" class="conts_box main_conts w100" ng-show="(OCselectedTabId == 'FN05')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" style="max-height: 560px;">
+						<table class="table table_basic mb-0 table_200 table_style table_sticky">
+							<colgroup>
+								<col width="78px">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th rowspan="2">연도</th>
+									<th ng-repeat="list in tabInfo[3].OCCODE" colspan="{{($index>3)?'4':'3'}}" ng-if="$index%4==0">{{list.C_MEMO}}</th>
+								</tr>
+								<tr class="text-center">
+									<th ng-repeat="list in tabInfo[3].OCCODE" ng-class="($index==0? 'position-static': '')">{{list.C_NAME}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':true">
+									<td class="td_back_color left_0">{{year.C_NAME}}년</td>
+									<td ng-repeat="list in tabInfo[3].OCCODE" class="text-right">{{tabInfo[3].DATA[''+year.C_SCODE+'FN05_'+list.C_SCODE]}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div id="tab5_5" class="conts_box main_conts w100" ng-show="(OCselectedTabId == 'FN06')">
+					<div class="table_wrap table-responsive table_scroll w_98 m-2" style="max-height: 560px;">
+						<table class="table table_basic mb-0 table_style table_sticky">
+							<colgroup>
+								<col width="78px">
+							</colgroup>
+							<thead>
+								<tr class="text-center">
+									<th>연도</th>
+									<th ng-repeat="list in tabInfo[4].OCCODE">{{list.C_NAME}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="year in ComCodeYearList2|orderBy:'C_SCODE':true">
+									<td class="td_back_color left_0">{{year.C_NAME}}년</td>
+									<td ng-repeat="list in tabInfo[4].OCCODE" class="text-right">{{tabInfo[4].DATA[''+year.C_SCODE+'FN06_'+list.C_SCODE]}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="float_R" style="padding-right: 10px;">
+					<button class="btn btn_sky btnEdit" ng-click="NewOCPopup()">신규/수정</button>
+					<!-- <button class="btn btn_nv" ng-click="EditOCPopup()">수정</button> -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="file" ng-file-select="fileSelect($files, 'xlsx')" id="input_excel_file" ng-model="files" style="width: 0px; height: 0px; position: absolute; padding: 0px; margin: 0px; overflow: hidden; opacity: 0;">
+</div>
+
+	<!-- 재정수지분석 팝업 -->
+	<div id="totalPopup" ng-include="'./view/new_finance/financial_popup.html'"></div>
+	<!-- 재무재표 팝업 -->
+	<div id="bsPopup" ng-include="'./view/new_finance/financialBS_popup.html'" ></div>
+	<!-- 손익계산서 팝업 -->
+	<div id="plPopup" ng-include="'./view/new_finance/financialPL_popup.html'" ></div>
+	<!-- 현금흐름표 팝업 -->
+	<div id="cfPopup" ng-include="'./view/new_finance/financialCF_popup.html'" ></div>
+	<!-- 기타비용 팝업 -->
+	<div id="ocPopup" ng-include="'./view/new_finance/financialOC_popup.html'" ></div>
+	
