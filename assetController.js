@@ -3,7 +3,6 @@ angular.module('app.asset').controller('assetStandardController', assetStandardC
 
 function assetStandardController($scope, $state, $stateParams, mainDataService, $rootScope, $compile, $timeout, $interval, ConfigService, YearSet, GridConfig, FixedAssetItem) {
   $scope.$on('$viewContentLoaded', function() {
-    //setGrid();
     gridResize();
     setDatePicker();
     $rootScope.setBtnAuth($scope.MCODE);
@@ -12,11 +11,8 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
   $scope.SelectedAssetBaseInfo = {};
   $scope.asset_base_sid = '';
   $scope.EditAssetBaseInfo = {};
-  //$scope.signStore = ["1등급","2등급","3등급","4등급","5등급","6등급","7등급","8등급","9등급","10등급"];
-  console.log($rootScope.LevelName);
 
   function setGrid() {
-
     var MyGrid = pagerJsonGrid({
       grid_id: 'list',
       pager_id: 'listPager',
@@ -197,45 +193,9 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
         $scope.currentPageNo = $('#list').getGridParam('page');
         $scope.count = $('#list').getGridParam('records');
         $scope.$apply();
-
-        /*head_groups("#list", [
-            {caption: 'Test 1', col: 'num', span: 2},
-            {caption: 'Result', col: 'sta', span: 3},
-            {caption: 'Bla bla bla', col: 'bl2', span: 2}
-        ]);*/
       }
     });
 
-    //MyGrid.jqGrid('setGroupHeaders',{
-    //useColSpanStyle: true,
-    //groupHeaders: [
-    /*		        	 {startColumnName: 'RNUM', numberOfColumns: 1, titleText: 'AAAAA'},
-                   //{startColumnName: 'BASE_SID', numberOfColumns: 1, titleText: 'AAAAAAA'},
-                   {startColumnName: 'FN_GBN_NM', numberOfColumns: 1, titleText: 'AAAA'},
-                   {startColumnName: 'WORK_GBN_NM', numberOfColumns: 1, titleText: 'AAAAA'},
-                   //{startColumnName: 'FN_GBN', numberOfColumns: 1, titleText: ''},
-                   //{startColumnName: 'WORK_GBN', numberOfColumns: 1, titleText: ''},
-                   {startColumnName: 'ASSET_GBN1_NM', numberOfColumns: 1, titleText: 'AAAA'},
-                   {startColumnName: 'ASSET_GBN2_NM', numberOfColumns: 1, titleText: 'AAAAAA'},
-                   //{startColumnName: 'ASSET_GBN1', numberOfColumns: 1, titleText: ''},
-                   //{startColumnName: 'ASSET_GBN1', numberOfColumns: 1, titleText: ''},
-                   //{startColumnName: 'ASSET_CD', numberOfColumns: 1, titleText: ''},
-                   {startColumnName: 'STATE_CD', numberOfColumns: 1, titleText: 'AAAAAAA'},*/
-    /*		             {startColumnName: 'LIFE_CD', numberOfColumns: 3, titleText: '내구연한'},
-                     {startColumnName: 'FAILURE_CD1', numberOfColumns: 2, titleText: '규제수명'},
-                     {startColumnName: 'FAILURE_CD2', numberOfColumns: 1, titleText: '용량수명'},
-                     {startColumnName: 'FAILURE_CD3', numberOfColumns: 1, titleText: '서비스수명'},
-                     {startColumnName: 'FAILURE_CD4', numberOfColumns: 2, titleText: '물리적수명'},
-                     {startColumnName: 'FAILURE_CD5', numberOfColumns: 1, titleText: '경제적수명'},*/
-    /*		             {startColumnName: 'RISK_SEVIOR_CD', numberOfColumns: 1, titleText: 'AAAA'},
-                     {startColumnName: 'SPARE_RATIO', numberOfColumns: 1, titleText: 'AAAAA'},*/
-    //		             {startColumnName: 'RPN_WEIGHT_LOS1', numberOfColumns: 6, titleText: '최적투자 계획수립 LOS연관성'},
-    /*{startColumnName: 'INSERT_ID', numberOfColumns: 1, titleText: 'AAAA'},
-    {startColumnName: 'INSERT_DT', numberOfColumns: 1, titleText: 'AAAA'},
-    {startColumnName: 'UPDATE_ID', numberOfColumns: 1, titleText: 'AAAA'},
-    {startColumnName: 'UPDATE_DT', numberOfColumns: 1, titleText: 'AAAA'},*/
-    //],
-    //});
     gridResize();
     return MyGrid;
   }
@@ -267,7 +227,6 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
   };
 
   $scope.initSearch = function(level) {
-    console.log(level);
     if (level < 2) {
       $scope.SearchWORK_GBN = '';
     }
@@ -345,7 +304,6 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
   $scope.AssetCode = [];
 
   mainDataService.getAssetLevelList({}).success(function(data) {
-    console.log(data);
     $scope.AseetLevelInfo = data;
     $.each($scope.AseetLevelInfo, function(idx, Item) {
       //$rootScope.LevelName[''+(Item.LEVEL_STEP -1) +'_'+ Item.LEVEL_CD] = Item.LEVEL_NM;
@@ -445,7 +403,6 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
       return;
     }
     $('#EditAssetBasePopup').show();
-    console.log($scope.EditAssetBaseInfo);
     $scope.EditAssetBaseInfo = angular.copy($scope.SelectedAssetBaseInfo);
   };
 
@@ -457,7 +414,6 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
   //팝업 내용 저장
   $scope.SaveEditAssetBasePopup = function() {
     $('select[name=statusEvaluation]').change(function() {
-      //console.log($("select[name=statusEvaluation] option:selected").text());
       $('#statusEvaluation').val($('select[name=statusEvaluation] option:selected').text());
     });
     var param = angular.copy($scope.EditAssetBaseInfo);
@@ -483,12 +439,10 @@ function assetStandardController($scope, $state, $stateParams, mainDataService, 
       alertify.alert('', '수명범위를 확인하세요.');
       return;
     }
-    //console.log($scope.EditAssetBaseInfo.SPARE_RATIO);
     mainDataService.updateAssetBase(param).success(function(data) {
       $scope.CloseEditAssetBasePopup();
       $scope.loadList();
       alertify.success('수정되었습니다.');
-      //alertify.alert('저장되었습니다.');
       return;
     });
   };
@@ -744,20 +698,14 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
       $scope.levelCd_length = '시설레벨' + $scope.LevelF.length + '/' + '관망레벨' + $scope.LevelN.length;
       return;
     }
-    console.log($scope.LevelInfoModal.LEVEL_STEP);
-    console.log($scope.LevelInfoModal.FN_CD);
     if ($scope.LevelInfoModal.FN_CD == 'F') {
-      console.log($scope.LevelF[idx].CD_LEN);
       $scope.levelCd_length = '자산분류코드는 ' + $scope.LevelF[idx].CD_LEN + '자로 입력하세요';
     } else if ($scope.LevelInfoModal.FN_CD == 'N') {
-      console.log($scope.LevelN[idx].CD_LEN);
       $scope.levelCd_length = '자산분류코드는 ' + $scope.LevelN[idx].CD_LEN + '자로 입력하세요';
     } else if (idx >= $scope.assetCriteria.FN_NUM) {
-      console.log('미확정');
       $scope.levelCd_length = '시설/관망 구분을 설정하세요';
     } else {
       $scope.levelCd_length = '자산분류코드는 ' + $scope.LevelN[idx].CD_LEN + '자로 입력하세요';
-      console.log($scope.LevelN[idx].CD_LEN);
     }
 
   };
@@ -891,7 +839,6 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
 
   function updateAssetLevelList() {
     mainDataService.getAssetLevelList({}).success(function(data) {
-      console.log(data);
       $scope.AssetLevelList = data;
       $.each(data, function(idx, Item) {
         $rootScope.LevelName['' + (Item.LEVEL_STEP - 1) + '_' + Item.LEVEL_CD] = Item.LEVEL_NM;
@@ -905,7 +852,6 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
   $scope.makePathCd = function(LevelInfoModal) {
     var P_PATH_CD = '';
     $.each($scope.AssetLevelList, function(idx, Item) {
-      console.log(Item);
       if (Item.LEVEL_CD == LevelInfoModal.P_CLASS_CD && Item.LEVEL_STEP == LevelInfoModal.P_LEVEL_STEP && Item.FN_CD == LevelInfoModal.FN_CD) {
         P_PATH_CD = (Item.PATH_CD == null) ? Item.LEVEL_CD : Item.PATH_CD;
       }
@@ -930,7 +876,6 @@ function assetController($scope, $state, $stateParams, mainDataService, $rootSco
   };
 
   $scope.updateLevelCode = function(item) {
-    console.log(item);
     mainDataService.updateLevelCode(item).success(function(obj) {
       if (!common.isEmpty(obj.errMessage)) {
         alertify.alert('', '레벨 코드 수정 중 에러 발생 : ' + obj.errMessage);
