@@ -1,0 +1,381 @@
+<div class="wh100">
+	<div class="min_tab">
+		<ul class="tabs">
+			<li>
+				<button id="tab1_btn" data-tab="tab1" class="tabs_btn active">유량/수압 조회</button>
+			</li>
+			<li>
+				<button id="tab2_btn" data-tab="tab2" class="tabs_btn">유량/수압 상세현황</button>
+			</li>
+			<li>
+				<button id="tab3_btn" data-tab="tab3" class="tabs_btn">수질 조회</button>
+			</li>
+			<li>
+				<button id="tab4_btn" data-tab="tab4" class="tabs_btn">요금 정보</button>
+			</li>
+		</ul>
+	</div>
+
+	<!-- 유량/수압 조회 -->
+
+	<div class="conts_box main_conts">
+		<div class="conts">
+			<div class="contain conts_half left w23" id="left_conts">
+				<div class="conts_in left_tab" id="tab1_l">
+					<nav>
+						<!-- {{blockList}} -->
+						<!-- 트리구조 -->
+						<div class="mb-3 nav_wrap font-weight-bold p-1 mt-2">
+							<section id="blockPanel-wrapper" class="blockPanel-wrapper">
+								<article class="blockPanel" ng-repeat="block in blockList |filter:{LEV : '1'}   |filter:{BL_PBCODE : '0000'}  "> <!-- | filter:{PO_PCODE_SUBSTR:'01'} -->
+									<!-- 대메뉴 -->
+									<div class="blockPanel-heading">
+										<div class="textareaChk">
+											<div class="custom-control custom-checkbox">
+												<a id="" data-toggle="collapse" aria-expanded="true" onclick="" data-target="#blockNav_second{{block.BL_BCODE}}" class="collapsed"> 
+													<span class="badge badge-primary mr-2 p-1">대</span> <span class="blockName">{{block.BL_NAME}}</span>
+												</a>
+											</div>
+										</div>
+									</div>
+									<ul>
+										<li ng-repeat="sub1 in subBlockList | filter:{BL_BCODE : block.BL_BCODE}  ">
+											<div class="textareaChk">
+												<div class="custom-control custom-checkbox">
+													<input type="checkbox" class="custom-control-input" id="chk_second_{{sub1.PO_PCODE}}" name="tab1_blockChk" ng-model="tab1.blockChk[sub1.PO_PCODE]" ng-click="selectOneCheckbox($event)" value="{{sub1.PO_PCODE}}"> 
+													<label class="custom-control-label" for="chk_second_{{sub1.PO_PCODE}}" style="padding: 0 !important"> 
+															<span class="badge badge-info mr-2 p-1">대</span> 
+															<span class="blockName">{{sub1.PO_NAME}}</span> 
+													</label>
+												</div>
+											</div>										
+										</li>
+									</ul>
+									<ul  id="blockNav_second{{block.BL_BCODE}}" class="list-group panel-collapse collapse show" style="">										
+										<!-- 중메뉴 -->
+										<li ng-repeat="sub in blockList |filter:{LEV : '2'}   |filter:{BL_PBCODE : block.BL_BCODE}  ">
+											<div class="textareaChk">
+												<div class="custom-control custom-checkbox">
+														<a id="" data-toggle="collapse" aria-expanded="true" data-target="#blockNav_third{{sub.BL_BCODE}}" class=""> 
+															<span class="badge badge-info mr-2 p-1">중</span> 
+															<span class="blockName">{{sub.BL_NAME}}</span> 
+														</a>
+												</div>
+											</div>
+											<ul>
+												<li ng-repeat="sub2 in subBlockList | filter:{BL_BCODE : sub.BL_BCODE}  ">
+													<div class="textareaChk">
+														<div class="custom-control custom-checkbox">
+															<input type="checkbox" class="custom-control-input" id="chk_second_{{sub2.PO_PCODE}}" name="tab1_blockChk" ng-model="tab1.blockChk[sub2.PO_PCODE]" ng-click="selectOneCheckbox($event)" value="{{sub2.PO_PCODE}}"> 
+															<label class="custom-control-label" for="chk_second_{{sub2.PO_PCODE}}" style="padding: 0 !important"> 
+																	<span class="badge badge-info mr-2 p-1">중</span> 
+																	<span class="blockName">{{sub2.PO_NAME}}</span> 
+															</label>
+														</div>
+													</div>										
+												</li>
+											</ul>
+											<ul id="blockNav_third{{sub.BL_BCODE}}" class="list-group panel-collapse collapse show" style="">
+												<!-- 소메뉴 -->
+												<li ng-repeat="third in blockList |filter:{LEV : '3'}  |filter:{BL_PBCODE : sub.BL_BCODE}  ">
+													<div class="textareaChk">
+														<div class="custom-control custom-checkbox">
+																<span  class="badge badge-success p-1">소</span> 
+																<span  class="blockName">{{third.BL_NAME}}</span> 
+														</div>
+													</div>
+													<ul >
+														<li ng-repeat="sub3 in subBlockList | filter:{BL_BCODE : third.BL_BCODE}  ">
+															<div class="textareaChk">
+																<div class="custom-control custom-checkbox">
+																	<input type="checkbox" class="custom-control-input" id="chk_second_{{sub3.PO_PCODE}}" name="tab1_blockChk" ng-model="tab1.blockChk[sub3.PO_PCODE]" ng-click="selectOneCheckbox($event)" value="{{sub3.PO_PCODE}}"> 
+																	<label class="custom-control-label" for="chk_second_{{sub3.PO_PCODE}}" style="padding: 0 !important"> 
+																			<span class="badge badge-info mr-2 p-1">소</span> 
+																			<span class="blockName">{{sub3.PO_NAME}}</span> 
+																	</label>
+																</div>
+															</div>										
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</article>
+							</section>
+						</div>
+						<article class="">
+							<form>
+								<h6 class="">
+									<i class="fas fa-angle-double-right"></i>기간 조회
+								</h6>
+								<div class="clear pl-1">
+									<div class="inputRdo">
+										<div class="custom-control custom-radio">
+											<input type="radio" class="custom-control-input ng-pristine ng-untouched ng-valid" name="tab1_DATE_radio" id="tab1_DATE_radio0" ng-model="tab1.DATE_radio" ng-change="setLastYear()" value="0"> 
+											<label class="custom-control-label" for="tab1_DATE_radio0">최근 일년</label>
+										</div>
+									</div>
+								</div>
+								<div class="clear pl-1">
+									<div class="inputRdo">
+										<div class="custom-control custom-radio">
+											<input type="radio" class="custom-control-input ng-pristine ng-untouched ng-valid" name="tab1_DATE_radio" id="tab1_DATE_radio1" ng-model="tab1.DATE_radio" value="1"> 
+											<label class="custom-control-label" for="tab1_DATE_radio1">사용자 선택</label>
+										</div>
+									</div>
+								</div>
+								<div class="form-group mt-1 datepickerWrap">
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<small class="input-group-text bg-white text-size-14"> <i class="xi-calendar-check xi-x text-secondary"></i>
+											</small>
+										</div>
+										<input type="text" class="form-control datePickerToday" id="tab1_S_DATE" ng-model="tab1.S_DATE" ng-change="changeRadio()">
+										<!-- 날짜 조회 start -->
+									</div>
+									<div class="input-group mt-2">
+										<div class="input-group-prepend">
+											<small class="input-group-text bg-white text-size-14"> <i class="xi-calendar-check xi-x text-secondary"></i>
+											</small>
+										</div>
+										<input type="text" class="form-control datePickerToday" id="tab1_E_DATE" ng-model="tab1.E_DATE" ng-change="changeRadio()">
+										<!-- 날짜 조회 end -->
+									</div>
+								</div>
+								<div class="text-center mt-2">
+									<!--									<button type="button" ng-click="month_search()" class="btn btn_nv">조회</button>-->
+									<button type="button" ng-click="search()" class="btn btn_nv">조회</button>
+									<!--									<button type="button" onclick="" class="btn btn_gr">엑셀</button>-->
+								</div>
+							</form>
+						</article>
+					</nav>
+				</div>
+			</div>
+		</div>
+
+		<div class="contain conts_half right w77" id="tab1">
+			<div class="conts_in">
+				<div class="bx_wrap p-1">
+					<div class="bx_border p-1" style="width: 100%;">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 유량 및 수압 그래프
+							</p>
+							<!-- 차트 영역 -->
+							<div id="monthGraph" style="width: 1220px; height: 320px; margin: 0 auto;">
+								<!-- style="width:600px; height:400px;"-->
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="bx_wrap p-1">
+					<div class="bx_border w70 mr-1 p-1">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 유량 및 수압 데이터 (월 단위)
+							</p>
+							<div class="float_R">
+								<button type="button" ng-click="getExcelDownload(1)" class="btn btn_gr">엑셀</button>
+							</div>
+						</div>
+						<div class="grid scrollVH">
+							<table id="month"></table>
+						</div>
+					</div>
+					<div class="bx_border w30 p-1">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 유량 및 수압 데이터 (일 단위)
+							</p>
+							<div class="float_R">
+								<button type="button" ng-click="getExcelDownload(2)" class="btn btn_gr">엑셀</button>
+							</div>
+						</div>
+						<div class="grid scrollVH">
+							<table id="day"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 유량/수압 상세현황 -->
+		<div class="contain conts_half right w77" id="tab2" style="display: none;">
+			<div class="conts_in">
+				<div class="bx_wrap p-1">
+					<div class="bx_border p-1" style="width: 100%;">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 유량 및 수압 그래프
+							</p>
+							<!-- 차트 영역 -->
+							<div id="hourGraph" style="width: 1220px; height: 320px; margin: 0 auto;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="bx_wrap p-1">
+					<div class="bx_border w70 mr-1 p-1">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 유량 및 수압 데이터 (시간 단위)
+							</p>
+							<div class="float_R">
+								<button type="button" ng-click="getExcelDownload(3)" class="btn btn_gr">엑셀</button>
+							</div>
+						</div>
+						<div class="grid scrollVH">
+							<table id="hour"></table>
+						</div>
+					</div>
+					<div class="bx_border w30 p-1">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 유량 및 수압 데이터 (분 단위)
+							</p>
+							<div class="float_R">
+								<button type="button" ng-click="getExcelDownload(4)" class="btn btn_gr">엑셀</button>
+							</div>
+						</div>
+						<div class="grid scrollVH">
+							<table id="min"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="contain conts_half right w77" id="tab3" style="display: none;">
+			<div class="conts_in">
+				<div class="bx_wrap p-1">
+					<div class="bx_border p-1" style="width: 100%;">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 수질데이터
+							</p>
+							<!-- 차트 영역 -->
+							<div id="waterQuality_hourGraph" style="width: 1220px; height: 320px; margin: 0 auto;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="bx_wrap p-1">
+					<div class="bx_border w70 mr-1 p-1">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 수질 데이터 (시간 단위)
+							</p>
+							<div class="float_R">
+								<button type="button" ng-click="getExcelDownload(5)" class="btn btn_gr">엑셀</button>
+							</div>
+						</div>
+						<div class="grid scrollVH">
+							<table id="waterQuality_hour"></table>
+						</div>
+					</div>
+					<div class="bx_border w30 p-1">
+						<div class="clear">
+							<p class="font-weight-bold font_s_14">
+								<i class="fas fa-angle-double-right"></i> 수질 데이터 (분 단위)
+							</p>
+							<div class="float_R">
+								<button type="button" ng-click="getExcelDownload(6)" class="btn btn_gr">엑셀</button>
+							</div>
+						</div>
+						<div class="grid scrollVH">
+							<table id="waterQuality_min"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="contain conts_half right w100" id="tab4" style="display: none;">
+			<div class="conts_in">
+				<div class="input_wrap">
+					<div class="clear d-flex align-items-center font-weight-bold my-2">
+						<span class="small font-weight-bold text-center" style="width: 100px;">기간 설정</span>
+						<div class="inputRdo p-2 border_color border_radius_10 border_radius_10-lg d-flex align-items-center" style="height: 46px">
+							<div class="custom-control custom-radio" style="width: auto !important;">
+								<input type="radio" class="custom-control-input" name="DATE_radio" id="DATE_radio1" ng-model="searchDateType" value="1"> 
+								<label class="custom-control-label" for="DATE_radio1" style="left: 55%; top: 0;"><span class="pdr_26">최근 1년</span></label>
+							</div>
+							<div class="custom-control custom-radio" style="width: auto !important;">
+								<input type="radio" class="custom-control-input" name="DATE_radio" id="DATE_radio2" ng-model="searchDateType" value="2"> 
+								<label class="custom-control-label" for="DATE_radio2" style="left: 45%; top: 0;"><span class="pdr_26">사용자 선택</span></label>
+							</div>
+							<div class="custom-control custom-radio d-flex align-items-center">
+								<input type="text" class="datePicker" ng-model="searchDate.S_DATE" ng-click="changeRadio(2)" style="width: 130px !important;"> 
+								<label for="" style="padding: 0 5px !important;" class="mb-0"><span>~</span></label> 
+								<input type="text" class="datePicker" ng-model="searchDate.E_DATE" ng-click="changeRadio(2)" style="width: 130px !important;">
+							</div>
+						</div>
+						<div class="pr-4 d-flex" style="margin-left: auto;">
+							<button type="button" class="btn btn_nv mr-1" ng-click="searchConsumerGroup()">조회</button>
+							<button type="button" class="btn btn_gr" ng-click="DownLoadExcel()">엑셀</button>
+						</div>
+					</div>
+				</div>
+				<div class="table_wrap table-responsive table_scroll w_98 border_color" style="max-height: 660px;">
+					<table class="table table_basic mb-0 table_200 table_style table_sticky">
+						<colgroup>
+							<col width="129px">
+							<col width="100px">
+							<col width="180px">
+							<col ng-if="block.BL_BODE!='0000' " width="150px" ng-repeat="block in blockList |filter :{IsValid:true}"> <!-- 블록수만큼 repeat -->
+						</colgroup>
+						<thead>
+							<tr class="text-center">
+								<th rowspan="2">연도</th>
+								<th rowspan="2" class="left_1">월</th>
+								<th rowspan="2" class="left_1" style="left: 229.5px;">항목</th>
+								<th colspan="{{DaeBlockCnt}}">대블록</th>
+								<th colspan="{{JungBlockCnt}}">중블록</th>
+								<th colspan="{{SoBlockCnt}}">소블록</th>
+							</tr>
+							<tr class="text-center">
+								<th ng-if="block.BL_BCODE!='0000' " class="{{($index==0)?'position-static':''}}" ng-repeat="block in blockList |filter :{IsValid:true}">{{block.BL_NAME}}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat=" data in ConsumerGroupList">
+								<td class="td_back_color left_0">{{data.C_YYYYMM.substring(0,4)}}년</td>
+								<td class="td_back_color left_1">{{data.C_YYYYMM.substring(4,6)}}월</td>
+								<td class="td_back_color" style="left: 229.5px;">
+								<table>
+									<tr><td>요금부과량</td></tr>
+									<tr><td>수용가수</td></tr>
+								</table></td>
+								<td ng-if="block.BL_BCODE!='0000' " ng-repeat="block in blockList |filter :{IsValid:true}" >
+								<table>
+									<tr><td>{{data['\''+ block.BL_BCODE +'\''+'_TOT']}}</td></tr>
+									<tr><td>{{data['\''+ block.BL_BCODE +'\''+'_CNT']}}</td></tr>
+								</table></td>
+							</tr>
+							<!-- 
+							<tr>
+								<td class="td_back_color" style="left: 229.5px;">수용가수</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+							-->
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
